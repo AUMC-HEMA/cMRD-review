@@ -7,7 +7,7 @@ def to_float(*args):
     return [float(arg) for arg in args]
 
 
-def generate_cluster_data(n_samples, centers, stds):
+def generate_cluster_data(n_samples, centers, stds, sample):
     # To-do: refractor
     label_healthy = "Non-leukemic"
     label_diseased = "Leukemic"
@@ -16,6 +16,7 @@ def generate_cluster_data(n_samples, centers, stds):
     X, y = make_blobs(n_samples=n_samples, centers=centers, cluster_std=stds, random_state=0)
     df = pd.DataFrame(X, columns=[label_x, label_y])
     df["Cluster"] = np.where(y == 1, label_diseased, label_healthy)
+    df["Sample"] = sample
     return df
 
 
@@ -56,8 +57,8 @@ def simulate_samples(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leuke
     n_cells_AML3 = [round(n_cells * (1 - frac_leukemic_AML3)), round(n_cells * frac_leukemic_AML3)]
 
     # Generate data for each condition
-    NBM = generate_cluster_data(int(n_cells), centers_NBM, stds_NBM)
-    AML1 = generate_cluster_data(n_cells_AML1, centers_AML1, stds_AML1)
-    AML2 = generate_cluster_data(n_cells_AML2, centers_AML2, stds_AML2)
-    AML3 = generate_cluster_data(n_cells_AML3, centers_AML3, stds_AML3)
+    NBM = generate_cluster_data(int(n_cells), centers_NBM, stds_NBM, "NBM")
+    AML1 = generate_cluster_data(n_cells_AML1, centers_AML1, stds_AML1, "AML1")
+    AML2 = generate_cluster_data(n_cells_AML2, centers_AML2, stds_AML2, "AML2")
+    AML3 = generate_cluster_data(n_cells_AML3, centers_AML3, stds_AML3, "AML3")
     return NBM, AML1, AML2, AML3
