@@ -100,7 +100,7 @@ def plot_supervised(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukem
     xlims = (-6, 6)
     ylims = (-6, 6)
     fig = plt.figure(figsize=(20, 5))
-    gs = gridspec.GridSpec(1, 4, figure=fig)
+    gs = gridspec.GridSpec(1, 3, figure=fig)
     
     # Train nearest-neighbor classifier on AML1
     df_X = AML1[[label_x, label_y]]
@@ -121,14 +121,6 @@ def plot_supervised(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukem
     # Plot decision boundary and data for AML3
     ax3 = fig.add_subplot(gs[0, 2])
     plot_decision_boundary(ax3, clf, xx, yy, AML3, "AML3")
-
-    # Plot ROC curves
-    ax4 = fig.add_subplot(gs[0, 3])
-    plot_roc_curve(ax4, clf, AML1, "AML1")
-    plot_roc_curve(ax4, clf, AML2, "AML2")
-    plot_roc_curve(ax4, clf, AML3, "AML3")
-    ax4.legend()
-    ax4.set_title("ROC Curves")
 
     plt.tight_layout()
     plt.show()
@@ -211,7 +203,7 @@ def plot_cluster_with_normal(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, fr
     AML3["KMeans"], AML3["Enrichment"] = cluster_with_normal(NBM, AML3)
 
     fig = plt.figure(figsize=(20, 5))
-    gs = gridspec.GridSpec(2, 4, figure=fig, height_ratios=[0.7, 0.3])
+    gs = gridspec.GridSpec(2, 3, figure=fig, height_ratios=[0.7, 0.3])
 
     ax1a = fig.add_subplot(gs[0, 0])
     plot_scatter(AML1, "AML1", ax1a)
@@ -227,14 +219,6 @@ def plot_cluster_with_normal(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, fr
     plot_scatter(AML3, "AML3", ax3a)
     ax3b = fig.add_subplot(gs[1, 2])
     plot_barplot(AML3, ax3b)
-
-    # Plot ROC curves
-    ax4 = fig.add_subplot(gs[:2, 3])
-    plot_roc_curve(ax4, AML1, "AML1")
-    plot_roc_curve(ax4, AML2, "AML2")
-    plot_roc_curve(ax4, AML3, "AML3")
-    ax4.legend()
-    ax4.set_title("ROC Curves")
 
     plt.tight_layout()
     plt.show()
@@ -265,7 +249,6 @@ def plot_novelty_detection(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac
         label_diseased = "Leukemic"
         label_x = "LAIP1"
         label_y = "LAIP2"
-        data["Prediction"] = np.where(data["dist"] > 0.1, label_diseased, label_healthy)
         sns.scatterplot(data=data, x="LAIP1", y="LAIP2", hue="Prediction", palette="tab10", legend=None, ax=ax)        
         ax.set_xlim(xlims)
         ax.set_ylim(ylims)
@@ -295,8 +278,12 @@ def plot_novelty_detection(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac
     AML2["dist"] = novelty_detection(NBM, AML2)
     AML3["dist"] = novelty_detection(NBM, AML3)
 
+    AML1["Prediction"] = np.where(AML1["dist"] > 0.1, label_diseased, label_healthy)
+    AML2["Prediction"] = np.where(AML2["dist"] > 0.1, label_diseased, label_healthy)
+    AML3["Prediction"] = np.where(AML3["dist"] > 0.1, label_diseased, label_healthy)
+
     fig = plt.figure(figsize=(20, 5))
-    gs = gridspec.GridSpec(1, 4, figure=fig)
+    gs = gridspec.GridSpec(1, 3, figure=fig)
 
     ax1 = fig.add_subplot(gs[0, 0])
     plot_scatter(AML1, "AML1", ax1)
@@ -306,14 +293,6 @@ def plot_novelty_detection(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac
 
     ax3 = fig.add_subplot(gs[0, 2])
     plot_scatter(AML3, "AML3", ax3)
-
-    # Plot ROC curves
-    ax4 = fig.add_subplot(gs[:2, 3])
-    # plot_roc_curve(ax4, AML1, "AML1")
-    # plot_roc_curve(ax4, AML2, "AML2")
-    # plot_roc_curve(ax4, AML3, "AML3")
-    ax4.legend()
-    # ax4.set_title("ROC Curves")
 
     plt.tight_layout()
     plt.show()
