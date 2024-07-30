@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn import neighbors
 from sklearn.cluster import KMeans
 from sklearn.metrics import roc_curve, auc
+from scipy.spatial import cKDTree
 
 from simulate import simulate_samples
 
@@ -51,6 +52,7 @@ def plot_simulation(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukem
 
     plt.tight_layout()
     plt.show()
+    return fig
 
 
 def plot_supervised(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukemic_AML3,
@@ -130,6 +132,8 @@ def plot_supervised(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukem
 
     plt.tight_layout()
     plt.show()
+    return fig
+
 
 
 def cluster_with_normal(control_data, test_data, k=6):
@@ -234,20 +238,83 @@ def plot_cluster_with_normal(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, fr
 
     plt.tight_layout()
     plt.show()
+    return fig
 
 
+def novelty_detection(control_data, test_data, k=5):
+    # Build a KDTree for dataset A
+    kdtree = cKDTree(control_data[["LAIP1", "LAIP2"]])
+    distances, indices = kdtree.query(test_data[["LAIP1", "LAIP2"]], k=5)
+    median_distances = np.median(distances, axis=1)
+    return median_distances
 
 
+def plot_novelty_detection(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukemic_AML3,
+                             mean_healthy_x, std_healthy_x, mean_healthy_y, std_healthy_y,
+                             dist_healthy_LAIP1, std_LAIP1_x, std_LAIP1_y,
+                             dist_healthy_LAIP2, std_LAIP2_x, std_LAIP2_y):
+    # To-do: refractor
+    label_healthy = "Non-leukemic"
+    label_diseased = "Leukemic"
+    label_x = "LAIP1"
+    label_y = "LAIP2"
+    
+    def plot_scatter(data, title, ax):
+        # To-do: refractor
+        label_healthy = "Non-leukemic"
+        label_diseased = "Leukemic"
+        label_x = "LAIP1"
+        label_y = "LAIP2"
+        data["Prediction"] = np.where(data["dist"] > 0.1, label_diseased, label_healthy)
+        sns.scatterplot(data=data, x="LAIP1", y="LAIP2", hue="Prediction", palette="tab10", legend=None, ax=ax)        
+        ax.set_xlim(xlims)
+        ax.set_ylim(ylims)
+        ax.set_title(title)
+
+    def plot_roc_curve(ax, data, label):
+        # To-do: refractor
+        label_healthy = "Non-leukemic"
+        label_diseased = "Leukemic"
+        label_x = "LAIP1"
+        label_y = "LAIP2"
+        fpr, tpr, _ = roc_curve(np.where(data["Cluster"] == label_diseased, 1, 0), data["Enrichment"])
+        roc_auc = auc(fpr, tpr)
+        ax.plot(fpr, tpr, label=f'{label} (AUC = {roc_auc:.2f})')
+
+    NBM, AML1, AML2, AML3 = simulate_samples(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukemic_AML3,
+                                             mean_healthy_x, std_healthy_x, mean_healthy_y, std_healthy_y,
+                                             dist_healthy_LAIP1, std_LAIP1_x, std_LAIP1_y,
+                                             dist_healthy_LAIP2, std_LAIP2_x, std_LAIP2_y)
 
 
+    xlims = (-6, 6)
+    ylims = (-6, 6)
+    
+    # Get cluster-with-normal results
+    AML1["dist"] = novelty_detection(NBM, AML1)
+    AML2["dist"] = novelty_detection(NBM, AML2)
+    AML3["dist"] = novelty_detection(NBM, AML3)
 
+    fig = plt.figure(figsize=(20, 5))
+    gs = gridspec.GridSpec(1, 4, figure=fig)
 
+    ax1 = fig.add_subplot(gs[0, 0])
+    plot_scatter(AML1, "AML1", ax1)
 
+    ax2 = fig.add_subplot(gs[0, 1])
+    plot_scatter(AML2, "AML2", ax2)
 
+    ax3 = fig.add_subplot(gs[0, 2])
+    plot_scatter(AML3, "AML3", ax3)
 
+    # Plot ROC curves
+    ax4 = fig.add_subplot(gs[:2, 3])
+    # plot_roc_curve(ax4, AML1, "AML1")
+    # plot_roc_curve(ax4, AML2, "AML2")
+    # plot_roc_curve(ax4, AML3, "AML3")
+    ax4.legend()
+    # ax4.set_title("ROC Curves")
 
-
-
-
-
-
+    plt.tight_layout()
+    plt.show()
+    return fig
