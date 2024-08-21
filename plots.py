@@ -103,7 +103,7 @@ def plot_supervised(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukem
     clf.fit(df_X, np.where(AML1["Cluster"] == label_diseased, 1, 0))
 
     # Create a mesh to plot in
-    xx, yy = np.meshgrid(np.arange(xlims[0], xlims[1], 0.1), np.arange(ylims[0], ylims[1], 0.1))
+    xx, yy = np.meshgrid(np.arange(xlims[0]-1, xlims[1]+1, 0.1), np.arange(ylims[0]-1, ylims[1]+1, 0.1))
     
     # Plot decision boundary and data for AML1
     ax1 = fig.add_subplot(gs[0, 0])
@@ -238,7 +238,7 @@ def plot_novelty_detection(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac
         label_y = "LAIP2"
 
         # Create a mesh to plot in
-        xx, yy = np.meshgrid(np.arange(xlims[0], xlims[1], 0.1), np.arange(ylims[0], ylims[1], 0.1))
+        xx, yy = np.meshgrid(np.arange(xlims[0]-1, xlims[1]+1, 0.1), np.arange(ylims[0]-1, ylims[1]+1, 0.1))
         grid_points = np.c_[xx.ravel(), yy.ravel()]
         kdtree = cKDTree(control_data[["LAIP1", "LAIP2"]])
         distances, indices = kdtree.query(grid_points, k=k)
