@@ -7,3 +7,7 @@ In this review article, we provided an illustrative example of how differences i
 ## How to use this repository
 
 The simulation can be altered using an interactive widget implemented in Jupyter notebook.
+
+You don't need to install anything! Just click the button below, which will launch a notebook:
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/AUMC-HEMA/cMRD-review/HEAD?labpath=interactive.ipynb)
