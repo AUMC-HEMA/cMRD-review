@@ -53,7 +53,6 @@ def plot_simulation(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukem
     plot_subplot(AML3, "AML3", ax4)
 
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -118,7 +117,6 @@ def plot_supervised(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac_leukem
     plot_decision_boundary(ax3, clf, xx, yy, AML3, "AML3")
 
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -208,7 +206,6 @@ def plot_cluster_with_normal(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, fr
     plot_scatter(AML3, "AML3", ax3)
 
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -294,5 +291,4 @@ def plot_novelty_detection(n_cells, frac_leukemic_AML1, frac_leukemic_AML2, frac
     plot_scatter(AML3, "AML3", ax3)
 
     plt.tight_layout()
-    plt.close(fig)
     return fig
