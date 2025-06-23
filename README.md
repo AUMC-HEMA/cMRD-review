@@ -1,6 +1,6 @@
 # Interactive simulation of computational MRD
 
-This repository explores a simulation of computational MRD detailed in the review article "Applications of machine learning for immunophenotypic measurable residual disease assessment in acute myeloid leukemia". 
+This repository explores a simulation of computational MRD detailed in the review article ["Applications of machine learning for immunophenotypic measurable residual disease assessment in acute myeloid leukemia"](https://doi.org/10.1002/hem3.70138). 
 
 In this review article, we provided an illustrative example of how differences in disease characteristics influence the ability of machine learning models to identify (residual) leukemic cells.
 
